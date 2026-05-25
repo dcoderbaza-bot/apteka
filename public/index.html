@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kirish | Dorixona Avtomatlashtirish Tizimi</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .logo-area {
+      margin-bottom: 30px;
+    }
+    .logo-icon {
+      font-size: 3rem;
+      background: linear-gradient(135deg, var(--accent-emerald) 0%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+    .logo-area h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px; 
+    }
+    .logo-area p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+    .btn-block {
+      width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container glass-card">
+    <div class="logo-area">
+      <span class="logo-icon">🏥</span>
+      <h1>APTEKA TIZIMI</h1>
+      <p>Boshqaruv va sotuv platformasiga kiring</p>
+    </div>
+
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="username">Foydalanuvchi nomi</label>
+        <input type="text" id="username" placeholder="Masalan: admin" required autocomplete="username">
+      </div>
+
+      <div class="input-group">
+        <label for="password">Parol</label>
+        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">
+        Tizimga Kirish 🚀
+      </button>
+    </form>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <span id="toastIcon"></span>
+    <span id="toastMessage"></span>
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

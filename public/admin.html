@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Boshqaruv Markazi | Dorixona Tizimi</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <!-- Chart.js for beautiful analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="admin-wrapper">
+    
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar glass-card">
+      <div class="sidebar-logo">
+        <span class="logo-emoji">🏥</span>
+        <h2>APTEKA ADMIN</h2>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button type="button" class="nav-item active" data-tab="dashboard">
+          <span>📊</span> Dashboard
+        </button>
+        <button type="button" class="nav-item" data-tab="inventory">
+          <span>📦</span> Ombor Boshqaruvi
+        </button>
+        <button type="button" class="nav-item" data-tab="users">
+          <span>👥</span> Xodimlar Boshqaruvi
+        </button>
+        <button type="button" class="nav-item" data-tab="reports">
+          <span>📈</span> Excel & Telegram
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <p id="adminName">Yuklanmoqda...</p>
+          <span class="badge badge-emerald">Administrator</span>
+        </div>
+        <button id="logoutBtn" class="btn btn-secondary btn-sm" style="width: 100%; margin-top: 10px;">Chiqish 🚪</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="admin-content">
+      
+      <!-- ======================================= -->
+      <!-- TAB: DASHBOARD -->
+      <!-- ======================================= -->
+      <section id="tab-dashboard" class="tab-content active">
+        <div class="tab-header">
+          <h1>📊 Boshqaruv Paneli</h1>
+          <p>Bugungi sotuvlar, sof foyda va zaxira ma'lumotlari tahlili</p>
+        </div>
+
+        <!-- KPI Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card glass-card">
+            <div class="kpi-info">
+              <span class="kpi-label">Bugungi Sotuvlar</span>
+              <span class="kpi-value" id="statToday">0 UZS</span>
+            </div>
+            <div class="kpi-icon icon-emerald">💵</div>
+          </div>
+
+          <div class="kpi-card glass-card">
+            <div class="kpi-info">
+              <span class="kpi-label">Oylik Sotuvlar</span>
+              <span class="kpi-value" id="statMonth">0 UZS</span>
+            </div>
+            <div class="kpi-icon icon-cyan">📊</div>
+          </div>
+
+          <div class="kpi-card glass-card">
+            <div class="kpi-info">
+              <span class="kpi-label">Sof Foyda</span>
+              <span class="kpi-value" id="statProfit">0 UZS</span>
+            </div>
+            <div class="kpi-icon icon-emerald">📈</div>
+          </div>
+
+          <div class="kpi-card glass-card warning-card" id="kpiLowStockCard">
+            <div class="kpi-info">
+              <span class="kpi-label">Kam Qolgan Dorilar</span>
+              <span class="kpi-value" id="statLowStock">0 ta</span>
+            </div>
+            <div class="kpi-icon icon-rose">⚠️</div>
+          </div>
+        </div>
+
+        <!-- Dashboard Charts & Top lists -->
+        <div class="dashboard-charts">
+          <div class="chart-container glass-card">
+            <h3>📈 Haftalik Savdo Grafigi</h3>
+            <canvas id="salesChart" style="max-height: 280px;"></canvas>
+          </div>
+
+          <div class="top-list-container glass-card">
+            <h3>🔥 Eng Ko'p Sotilgan Dorilar</h3>
+            <div class="top-items-list" id="topMedicinesList">
+              <p class="text-muted">Yuklanmoqda...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================= -->
+      <!-- TAB: INVENTORY -->
+      <!-- ======================================= -->
+      <section id="tab-inventory" class="tab-content">
+        <div class="tab-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1>📦 Ombor va Dorilar Boshqaruvi</h1>
+            <p>Dori vositalarini qo'shing, narxini yoki sonini tahrirlang</p>
+          </div>
+          <button class="btn btn-primary" onclick="openMedicineModal()">Yangi Dori Qo'shish ➕</button>
+        </div>
+
+        <div class="search-bar-row">
+          <input type="text" id="inventorySearch" placeholder="Nom yoki shtrix-kod bo'yicha qidirish..." class="glass-input">
+        </div>
+
+        <div class="table-container glass-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Dori Nomi</th>
+                <th>Xalqaro Nomi</th>
+                <th>Shtrix-Kod</th>
+                <th>Kategoriya</th>
+                <th>Zaxira</th>
+                <th>Sotib Olingan</th>
+                <th>Sotish Narxi</th>
+                <th style="width: 130px;">Amallar</th>
+              </tr>
+            </thead>
+            <tbody id="medicineTableBody">
+              <tr>
+                <td colspan="8" class="text-center text-muted">Yuklanmoqda...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ======================================= -->
+      <!-- TAB: USERS -->
+      <!-- ======================================= -->
+      <section id="tab-users" class="tab-content">
+        <div class="tab-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1>👥 Xodimlar (Sotuvchilar) Boshqaruvi</h1>
+            <p>Sotuvchilarni tizimga qo'shing, ularning hisoblarini faollashtiring yoki bloklang</p>
+          </div>
+          <button class="btn btn-primary" onclick="openUserModal()">Yangi Xodim Qo'shish ➕</button>
+        </div>
+
+        <div class="table-container glass-card">
+          <table>
+            <thead>
+              <tr>
+                <th>To'liq Ismi</th>
+                <th>Foydalanuvchi nomi</th>
+                <th>Roli</th>
+                <th>Holati</th>
+                <th>Yaratilgan Vaqt</th>
+                <th style="width: 250px;">Amallar</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody">
+              <tr>
+                <td colspan="6" class="text-center text-muted">Yuklanmoqda...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ======================================= -->
+      <!-- TAB: REPORTS -->
+      <!-- ======================================= -->
+      <section id="tab-reports" class="tab-content">
+        <div class="tab-header">
+          <h1>📈 Excel Hisobotlar va Telegram Integratsiyasi</h1>
+          <p>Barcha savdo va ombor ma'lumotlarini Excel formatida Telegram bot orqali belgilangan chatga yuboring</p>
+        </div>
+
+        <div id="telegramStatusBox" class="telegram-status-box glass-card">
+          <div class="telegram-status-row">
+            <span id="telegramStatusIcon">⏳</span>
+            <div>
+              <strong id="telegramStatusTitle">Telegram bot tekshirilmoqda...</strong>
+              <p id="telegramStatusText" class="text-muted" style="margin-top: 4px;"></p>
+            </div>
+          </div>
+          <a href="https://t.me/Apteka_hisobot_uz_bot" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">
+            @Apteka_hisobot_uz_bot — menyu va kirim/chiqim
+          </a>
+          <p class="text-muted" style="font-size:0.78rem; margin-top:8px;">
+            Botda: Statistika, Kirim, Chiqim tugmalari. Tez yozish: <code>+500000</code> kirim, <code>-120000</code> chiqim
+          </p>
+        </div>
+
+        <div class="reports-grid">
+          <!-- Sales Telegram Trigger -->
+          <div class="report-box glass-card">
+            <span class="report-icon">📊</span>
+            <h2>Sotuvlar Hisoboti (Excel)</h2>
+            <p>Barcha amalga oshirilgan savdolar va sotuvchilar haqidagi ma'lumotlarni o'z ichiga olgan batafsil jadval.</p>
+            <button type="button" class="btn btn-primary btn-block" onclick="sendReportToTelegram('sales', this)">Telegramga Yuborish 🛫</button>
+          </div>
+
+          <!-- Inventory Telegram Trigger -->
+          <div class="report-box glass-card">
+            <span class="report-icon">📦</span>
+            <h2>Ombor Qoldiqlari Hisoboti (Excel)</h2>
+            <p>Kam qolayotgan dorilar va umumiy dorilar zaxirasi.</p>
+            <button type="button" class="btn btn-primary btn-block" onclick="sendReportToTelegram('inventory', this)">Telegramga Yuborish 🛫</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ======================================= -->
+  <!-- MODAL: ADD / EDIT MEDICINE -->
+  <!-- ======================================= -->
+  <div id="medicineModal" class="modal">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h2 id="medicineModalTitle">Yangi Dori Qo'shish</h2>
+        <button class="modal-close" onclick="closeMedicineModal()">&times;</button>
+      </div>
+      <form id="medicineForm">
+        <input type="hidden" id="medId">
+
+        <!-- 1-qadam: shtrix-kod skaneri -->
+        <div id="medicineScanStep" class="medicine-scan-step">
+          <p class="scan-step-label">1-qadam — avval shtrix-kodni skaner qiling</p>
+          <div class="input-group scanner-field-group">
+            <label for="medBarcode">📷 Shtrix-kod (USB skaner)</label>
+            <input
+              type="text"
+              id="medBarcode"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="Skanerni shu yerga yo'naltiring va skaner qiling..."
+            >
+          </div>
+          <p id="medScanStatus" class="med-scan-status">Skaner tayyor</p>
+        </div>
+
+        <!-- 2-qadam: qolgan ma'lumotlar -->
+        <div id="medicineDetailsStep" class="medicine-details-step is-hidden">
+          <p class="scan-step-label scan-step-label--second">2-qadam — dori ma'lumotlarini kiriting</p>
+
+          <div class="input-grid">
+            <div class="input-group">
+              <label for="medName">Dori Nomi *</label>
+              <input type="text" id="medName" required>
+            </div>
+            <div class="input-group">
+              <label for="medGeneric">Xalqaro Nomi (Tarkibi)</label>
+              <input type="text" id="medGeneric">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="medCategory">Kategoriya</label>
+            <input type="text" id="medCategory" placeholder="Masalan: Og'riq qoldiruvchi">
+          </div>
+
+          <div class="input-grid-3">
+            <div class="input-group">
+              <label for="medStock">Zaxira Soni *</label>
+              <input type="number" id="medStock" required min="0" value="0">
+            </div>
+            <div class="input-group">
+              <label for="medPurchase">Sotib Olingan Narxi (UZS) *</label>
+              <input type="number" id="medPurchase" required min="0">
+            </div>
+            <div class="input-group">
+              <label for="medSelling">Sotish Narxi (UZS) *</label>
+              <input type="number" id="medSelling" required min="0">
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeMedicineModal()">Bekor qilish</button>
+          <button type="submit" id="medicineSubmitBtn" class="btn btn-primary" disabled>Saqlash 💾</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================= -->
+  <!-- MODAL: ADD / EDIT USER (SELLER) -->
+  <!-- ======================================= -->
+  <div id="userModal" class="modal">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h2 id="userModalTitle">Yangi Xodim Qo'shish</h2>
+        <button class="modal-close" onclick="closeUserModal()">&times;</button>
+      </div>
+      <form id="userForm">
+        <input type="hidden" id="userId">
+        
+        <div class="input-group">
+          <label for="userFullname">To'liq Ismi *</label>
+          <input type="text" id="userFullname" required placeholder="Masalan: Eshmatov Toshmat">
+        </div>
+
+        <div class="input-group">
+          <label for="userUsername">Foydalanuvchi Nomi *</label>
+          <input type="text" id="userUsername" required placeholder="Masalan: toshmat_seller">
+        </div>
+
+        <div class="input-group" id="userPasswordGroup">
+          <label for="userPassword">Parol *</label>
+          <input type="password" id="userPassword" placeholder="Kamida 6 xonali parol">
+        </div>
+
+        <div class="input-grid">
+          <div class="input-group">
+            <label for="userRole">Roli *</label>
+            <select id="userRole" required>
+              <option value="seller">Sotuvchi</option>
+              <option value="admin">Administrator</option>
+            </select>
+          </div>
+          <div class="input-group" id="userStatusGroup">
+            <label for="userStatus">Holati *</label>
+            <select id="userStatus" required>
+              <option value="1">Faol</option>
+              <option value="0">Bloklangan</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Bekor qilish</button>
+          <button type="submit" class="btn btn-primary">Saqlash 💾</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================= -->
+  <!-- MODAL: RESET USER PASSWORD -->
+  <!-- ======================================= -->
+  <div id="resetPasswordModal" class="modal">
+    <div class="modal-content glass-card" style="max-width: 400px;">
+      <div class="modal-header">
+        <h2>Parolni O'zgartirish</h2>
+        <button class="modal-close" onclick="closeResetPasswordModal()">&times;</button>
+      </div>
+      <form id="resetPasswordForm">
+        <input type="hidden" id="resetUserId">
+        <p style="margin-bottom: 15px; font-size: 0.9rem;" class="text-secondary" id="resetUserHeading"></p>
+        <div class="input-group">
+          <label for="resetNewPassword">Yangi Parol *</label>
+          <input type="password" id="resetNewPassword" required placeholder="Yangi parol kiriting">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeResetPasswordModal()">Bekor qilish</button>
+          <button type="submit" class="btn btn-primary">Yangilash 💾</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <span id="toastIcon"></span>
+    <span id="toastMessage"></span>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

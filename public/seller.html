@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sotuvchi Paneli | Dorixona Tizimi</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/seller.css">
+</head>
+<body>
+
+  <!-- Main POS Header -->
+  <header class="pos-header glass-card">
+    <div class="header-logo">
+      <span class="logo-emoji">🏥</span>
+      <div>
+        <h2>APTEKA POS</h2>
+        <span class="seller-role badge badge-emerald">Sotuvchi</span>
+      </div>
+    </div>
+    <div class="user-meta">
+      <div class="user-details">
+        <p id="sellerName">Yuklanmoqda...</p>
+        <span id="sellerUsername" class="text-muted">@username</span>
+      </div>
+      <button id="logoutBtn" class="btn btn-secondary btn-sm">Chiqish 🚪</button>
+    </div>
+  </header>
+
+  <!-- POS Main Layout -->
+  <main class="pos-container">
+    
+    <!-- LEFT PANEL: CART & CHECKOUT -->
+    <section class="pos-left glass-card">
+      <div class="panel-header">
+        <h3>🛒 Savdo Aravasi</h3>
+        <button id="clearCartBtn" class="btn btn-secondary btn-sm">Tozalash</button>
+      </div>
+
+      <!-- Cart Items List -->
+      <div class="cart-items" id="cartItems">
+        <div class="empty-cart">
+          <span>🛒</span>
+          <p>Aravacha bo'sh. O'ng tomondan dorilarni qo'shing.</p>
+        </div>
+      </div>
+
+      <!-- Price Breakdown & Checkout -->
+      <div class="checkout-area">
+        <div class="price-row">
+          <span>Jami Summa:</span>
+          <span class="total-price" id="totalPrice">0 UZS</span>
+        </div>
+
+        <div class="input-group">
+          <label>To'lov Usuli</label>
+          <div class="payment-grid">
+            <label class="pay-option">
+              <input type="radio" name="paymentMethod" value="cash" checked>
+              <span class="pay-box">💵 Naqd</span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="paymentMethod" value="card">
+              <span class="pay-box">💳 Karta</span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="paymentMethod" value="terminal">
+              <span class="pay-box">🖥️ Terminal</span>
+            </label>
+          </div>
+        </div>
+
+        <button id="checkoutBtn" class="btn btn-primary btn-checkout">
+          Savdoni Yakunlash & Chek 🧾
+        </button>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: SEARCH & INVENTORY -->
+    <section class="pos-right glass-card">
+      <div class="search-box">
+        <label for="searchInput" class="scanner-label">📷 Shtrix-kod skaneri</label>
+        <input
+          type="text"
+          id="searchInput"
+          class="scanner-input"
+          placeholder="Skanerni shu yerga yo'naltiring yoki shtrix-kodni skaner qiling..."
+          autocomplete="off"
+          spellcheck="false"
+          autofocus
+        >
+        <p id="scannerStatus" class="scanner-status">Skaner tayyor — USB skanerni ulang va skaner qiling</p>
+      </div>
+
+      <div class="inventory-grid" id="inventoryGrid">
+        <!-- Live Inventory Items appear here -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal: Receipt / Chek -->
+  <div id="receiptModal" class="modal">
+    <div class="modal-content receipt-content glass-card">
+      <div class="receipt-header">
+        <h2>🧾 Xarid Kvitansiyasi</h2>
+        <button class="modal-close" onclick="closeReceiptModal()">&times;</button>
+      </div>
+      <div class="receipt-body" id="receiptBody">
+        <!-- Rendered Receipt details -->
+      </div>
+      <div class="modal-footer">
+        <button onclick="window.print()" class="btn btn-primary">Chop etish 🖨️</button>
+        <button onclick="closeReceiptModal()" class="btn btn-secondary">Yopish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <span id="toastIcon"></span>
+    <span id="toastMessage"></span>
+  </div>
+
+  <script src="js/seller.js"></script>
+</body>
+</html>
