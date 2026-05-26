@@ -88,6 +88,34 @@ app.get('/api/reports/telegram/status', authenticateToken, authorizeRole('admin'
 app.post('/api/reports/telegram', authenticateToken, authorizeRole('admin'), reportController.sendTelegramReport);
 
 // ==========================================
+// 🛡️ SECURE DIAGNOSTICS ENDPOINT (ADMIN ONLY)
+// ==========================================
+app.get('/api/admin/diagnose-env', authenticateToken, authorizeRole('admin'), (req, res) => {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const jwtSecret = process.env.JWT_SECRET;
+  
+  res.json({
+    env: process.env.NODE_ENV || 'not-set',
+    isVercel: !!process.env.VERCEL,
+    telegramBotToken: {
+      defined: !!token,
+      length: token ? token.length : 0,
+      prefix: token && token.length > 5 ? token.substring(0, 5) + '...' : 'none',
+      isPlaceholder: token === 'YOUR_TELEGRAM_BOT_TOKEN_HERE'
+    },
+    telegramChatId: {
+      defined: !!chatId,
+      value: chatId || 'none'
+    },
+    jwtSecret: {
+      defined: !!jwtSecret,
+      length: jwtSecret ? jwtSecret.length : 0
+    }
+  });
+});
+
+// ==========================================
 // 🤖 TELEGRAM WEBHOOK ENDPOINT (VERCEL RUNTIME)
 // ==========================================
 app.post('/api/telegram-webhook', async (req, res) => {
