@@ -664,6 +664,30 @@ async function loadTelegramStatus() {
     title.textContent = 'Telegram holatini tekshirib bo\'lmadi';
     text.textContent = 'Server bilan aloqani tekshiring.';
   }
+
+  // Fetch secure environment diagnostics for Admin UI
+  try {
+    const diagResponse = await fetch('/api/admin/diagnose-env', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (diagResponse.ok) {
+      const diag = await diagResponse.json();
+      const diagBox = document.getElementById('diagnosticsBox');
+      const diagContent = document.getElementById('diagnosticsContent');
+      if (diagBox && diagContent) {
+        diagBox.style.display = 'block';
+        diagContent.innerHTML = `
+          <div>🌐 <strong>Vercel Muhit:</strong> ${diag.isVercel ? '🟢 Ha (Vercel Cloud)' : '💻 Yo\'q (Localhost)'}</div>
+          <div>🤖 <strong>Bot Token:</strong> ${diag.telegramBotToken.defined ? '🟢 Kiritilgan' : '🔴 Kiritilmagan'} (Uzunligi: ${diag.telegramBotToken.length} belgi, Boshlanishi: <code>${diag.telegramBotToken.prefix}</code>)</div>
+          <div>💬 <strong>Telegram Chat ID:</strong> ${diag.telegramChatId.defined ? '🟢 Kiritilgan' : '🔴 Kiritilmagan'} (Qiymat: <code>${diag.telegramChatId.value}</code>)</div>
+          <div>🔑 <strong>JWT Maxfiy Kalit:</strong> ${diag.jwtSecret.defined ? '🟢 Kiritilgan' : '🔴 Kiritilmagan'}</div>
+          <div style="margin-top: 10px; font-size: 0.8rem; color: #94a3b8;">💡 <em>Agar kiritilgan bo'lsa ham qizil bo'lsa, Vercel Dashboard'da o'zgaruvchini saqlab, loyihani qayta deploy qilishingiz lozim.</em></div>
+        `;
+      }
+    }
+  } catch (e) {
+    console.warn('Diagnostics fetch failed:', e);
+  }
 }
 
 window.sendReportToTelegram = async function(type, clickedBtn) {
