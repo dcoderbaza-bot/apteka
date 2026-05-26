@@ -26,11 +26,16 @@ Brauzer: http://localhost:3000
 1. [@Apteka_hisobot_uz_bot](https://t.me/Apteka_hisobot_uz_bot) ga `/start` yuboring
 2. Tugmalar: Statistika, Kirim, Chiqim, Excel hisobotlar
 
-## Vercel deploy va Speed Insights
+## Vercel deploy va Webhook Sozlamalari
 
-1. [Vercel](https://vercel.com) da loyihani import qiling (GitHub: `dcoderbaza-bot/apteka`)
-2. Dashboard → **Speed Insights** → **Enable**
-3. Production da Core Web Vitals avtomatik yig'iladi (`/_vercel/speed-insights/script.js`)
+1. **Vercel**da loyihani import qiling (GitHub: `dcoderbaza-bot/apteka`)
+2. **Settings → Environment Variables** bo'limida quyidagi o'zgaruvchilarni qo'shing:
+   - `TELEGRAM_BOT_TOKEN` : BotFather dan olingan bot tokeni
+   - `TELEGRAM_CHAT_ID` : Shaxsiy Telegram Chat ID
+   - `JWT_SECRET` : Maxfiy kalit (masalan, `apteka_secure_jwt_secret_key_2026_xyz`)
+3. Muhit o'zgaruvchilari kiritilgach, yangi build va deploy jarayonini boshlash uchun kodni push qiling.
+4. Telegram webhookni ulash uchun brauzeringiz orqali quyidagi URLga so'rov yuboring:
+   `https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook?url=https://<Sizning-Vercel-Domen>/api/telegram-webhook`
 
 ## GitHub ga push
 
