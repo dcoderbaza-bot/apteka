@@ -333,5 +333,6 @@ function stopTelegramPoller() {
 module.exports = {
   startTelegramPoller,
   stopTelegramPoller,
-  sendTelegramMessage
+  sendTelegramMessage,
+  handleUpdate
 };

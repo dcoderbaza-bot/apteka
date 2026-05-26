@@ -1,7 +1,18 @@
 const fs = require('fs');
 const path = require('path');
 
-const CHAT_FILE = path.join(__dirname, '..', 'telegram-chat.json');
+const rootChatFile = path.join(__dirname, '..', 'telegram-chat.json');
+const CHAT_FILE = process.env.VERCEL
+  ? path.join('/tmp', 'telegram-chat.json')
+  : rootChatFile;
+
+if (process.env.VERCEL && !fs.existsSync(CHAT_FILE) && fs.existsSync(rootChatFile)) {
+  try {
+    fs.copyFileSync(rootChatFile, CHAT_FILE);
+  } catch (e) {
+    console.error('Failed to copy telegram-chat.json to /tmp:', e);
+  }
+}
 
 function getBotId(token) {
   return token ? String(token).split(':')[0] : null;

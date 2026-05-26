@@ -1,13 +1,33 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
 
-const dbPath = path.join(__dirname, '..', 'database.db');
+let dbPath = path.join(__dirname, '..', 'database.db');
+
+if (process.env.VERCEL) {
+  const tmpDbPath = path.join('/tmp', 'database.db');
+  // Copy seed database to /tmp if it doesn't exist
+  if (!fs.existsSync(tmpDbPath)) {
+    try {
+      if (fs.existsSync(dbPath)) {
+        fs.copyFileSync(dbPath, tmpDbPath);
+        console.log('Database seeded successfully to /tmp/database.db');
+      } else {
+        console.log('No seed database found at root, will create new database at /tmp/database.db');
+      }
+    } catch (e) {
+      console.error('Failed to copy database to /tmp:', e);
+    }
+  }
+  dbPath = tmpDbPath;
+}
+
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error('Error opening database:', err.message);
   } else {
-    console.log('Connected to the SQLite database.');
+    console.log(`Connected to the SQLite database at: ${dbPath}`);
   }
 });
 

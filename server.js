@@ -25,12 +25,12 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://va.vercel-scripts.com"],
       scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:"],
-      connectSrc: ["'self'"]
+      connectSrc: ["'self'", "https://vitals.vercel-insights.com"]
     }
   }
 }));
@@ -88,6 +88,24 @@ app.get('/api/reports/telegram/status', authenticateToken, authorizeRole('admin'
 app.post('/api/reports/telegram', authenticateToken, authorizeRole('admin'), reportController.sendTelegramReport);
 
 // ==========================================
+// 🤖 TELEGRAM WEBHOOK ENDPOINT (VERCEL RUNTIME)
+// ==========================================
+app.post('/api/telegram-webhook', async (req, res) => {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token || token === 'YOUR_TELEGRAM_BOT_TOKEN_HERE') {
+    return res.status(400).send('Telegram Bot Token is not configured.');
+  }
+  try {
+    const { handleUpdate } = require('./utils/telegramPoller');
+    await handleUpdate(token, req.body);
+    res.status(200).send('OK');
+  } catch (err) {
+    console.error('Webhook processing error:', err.message);
+    res.status(500).send('Webhook processing error: ' + err.message);
+  }
+});
+
+// ==========================================
 // FALLBACK ROUTING TO FRONTEND
 // ==========================================
 // Redirect any unhandled route to login/main index page
@@ -98,11 +116,15 @@ app.get('*', (req, res) => {
 // Telegram bot — /start orqali chat ID ni qabul qiladi
 const { startTelegramPoller } = require('./utils/telegramPoller');
 
-// Start Express Server
-app.listen(PORT, () => {
-  console.log(`=================================================`);
-  console.log(`🏥 Apteka Automation System running on Port ${PORT}`);
-  console.log(`🔐 Mode: ${process.env.NODE_ENV || 'production'}`);
-  console.log(`=================================================`);
-  startTelegramPoller();
-});
+// Start Express Server only if not on Vercel
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`=================================================`);
+    console.log(`🏥 Apteka Automation System running on Port ${PORT}`);
+    console.log(`🔐 Mode: ${process.env.NODE_ENV || 'production'}`);
+    console.log(`=================================================`);
+    startTelegramPoller();
+  });
+}
+
+module.exports = app;

@@ -26,6 +26,12 @@ Brauzer: http://localhost:3000
 1. [@Apteka_hisobot_uz_bot](https://t.me/Apteka_hisobot_uz_bot) ga `/start` yuboring
 2. Tugmalar: Statistika, Kirim, Chiqim, Excel hisobotlar
 
+## Vercel deploy va Speed Insights
+
+1. [Vercel](https://vercel.com) da loyihani import qiling (GitHub: `dcoderbaza-bot/apteka`)
+2. Dashboard → **Speed Insights** → **Enable**
+3. Production da Core Web Vitals avtomatik yig'iladi (`/_vercel/speed-insights/script.js`)
+
 ## GitHub ga push
 
 ```bash
